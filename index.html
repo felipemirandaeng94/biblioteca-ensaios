@@ -320,8 +320,9 @@ const $ = s=>document.querySelector(s);
 const pad = n=>String(n).padStart(2,"0");
 const layerOf = id=>LAYERS.find(l=>l.id===id);
 
-const thumb = e=>`${e.reg}-thumb.jpg`;
-const pageSrc = (e,n)=>`${e.reg}-${n}.jpg`;
+const V = "20261006b"; /* troque a cada atualização de imagens */
+const thumb = e=>`${e.reg}-thumb.jpg?v=${V}`;
+const pageSrc = (e,n)=>`${e.reg}-${n}.jpg?v=${V}`;
 function pageHTML(e){
   return `<div class="page"><img src="${thumb(e)}" alt="Primeira página do boletim ${e.reg}" loading="lazy"></div>`;
 }
