@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f5f1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="ime.png">
+<link rel="apple-touch-icon" href="ime.png">
+<title>Biblioteca de Ensaios LET</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: biblioteca técnica clara; cabeçalho institucional compacto, busca + chips, grade de folhas A4; visualizador escuro de tela cheia com o documento no centro */
+:root{
+  color-scheme: light;
+  --bg:#f5f5f1;          /* off-white */
+  --surface:#ffffff;     /* cards */
+  --stage:#e9ebe6;       /* fundo neutro da prévia */
+  --line:#dcdfd8;        /* bordas discretas */
+  --ink:#1d2320;         /* grafite */
+  --ink-2:#4f5852;       /* texto secundário */
+  --ink-3:#7c857f;       /* rótulos */
+  --accent:#1f6b3a;      /* verde institucional (mesmo tom dos boletins) */
+  --accent-soft:#e3efe6;
+  --viewer:#1a1d1b;      /* fundo do visualizador */
+  --viewer-2:#262a27;
+  --viewer-line:#3a403c;
+  --viewer-fg:#eef1ec;
+  --viewer-mut:#a3aca5;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  --r:10px;
+  --shadow-sheet:0 1px 2px rgba(20,30,24,.10),0 8px 18px -8px rgba(20,30,24,.28);
+  --shadow-sheet-hi:0 2px 4px rgba(20,30,24,.10),0 18px 34px -12px rgba(20,30,24,.38);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+img{max-width:100%;display:block}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:clamp(16px,4vw,40px)}
+
+/* ---------- cabeçalho ---------- */
+.masthead{border-bottom:1px solid var(--line);background:var(--surface)}
+.masthead .wrap{display:flex;align-items:center;gap:clamp(14px,2.4vw,24px);padding-block:clamp(18px,3vw,28px)}
+.crest{width:clamp(48px,6vw,64px);height:auto;flex:none}
+.mh-txt{min-width:0;flex:1}
+.mh-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
+h1{margin:2px 0 4px;font-size:clamp(22px,3.2vw,32px);line-height:1.12;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.mh-sub{margin:0;color:var(--ink-2);font-size:clamp(14px,1.5vw,16px)}
+.mh-count{flex:none;align-self:center;text-align:right;font-family:var(--mono);font-size:12px;color:var(--ink-3);letter-spacing:.04em}
+.mh-count b{display:block;font-family:var(--sans);font-size:28px;line-height:1;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+
+.intro{padding-block:18px 0;color:var(--ink-3);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 14px}
+.intro span:first-child{color:var(--ink-2)}
+
+/* ---------- busca e filtros ---------- */
+.tools{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  padding-block:14px;margin-top:6px;border-bottom:1px solid transparent;transition:border-color .2s}
+.tools.stuck{border-bottom-color:var(--line)}
+.tools .wrap{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.search{position:relative;flex:1 1 320px;min-width:0;max-width:480px}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--ink-3);pointer-events:none}
+.search input{width:100%;height:44px;border:1px solid var(--line);border-radius:999px;background:var(--surface);
+  padding:0 40px 0 42px;font:inherit;font-size:15px;color:var(--ink);transition:border-color .15s,box-shadow .15s}
+.search input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+.search input::placeholder{color:var(--ink-3)}
+.search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.search .x{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:0;border-radius:50%;background:transparent;cursor:pointer;color:var(--ink-3);font-size:18px;line-height:1}
+.search .x:hover{background:var(--stage);color:var(--ink)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex:0 1 auto;min-width:0;padding:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;
+  font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);
+  transition:background .18s,color .18s,border-color .18s}
+.chip:hover{border-color:#b9bfb7;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.tools .wrap.result-line{display:block}
+.result-line{font-size:13px;color:var(--ink-3);padding-block:4px 0}
+.result-line b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ---------- grade ---------- */
+main{padding-block:18px 56px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:22px}
+.card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:pointer;
+  text-align:left;padding:0;transition:transform .25s ease,box-shadow .25s ease,border-color .25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(20,30,24,.45);border-color:#cfd4cc}
+.card:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.card.enter{animation:enter .38s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--k,0) * 28ms)}
+@keyframes enter{from{opacity:.0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.preview{position:relative;background:var(--stage);padding:22px 26px 0;overflow:hidden;
+  background-image:radial-gradient(circle at 1px 1px,rgba(30,40,34,.07) 1px,transparent 0);background-size:14px 14px}
+.sheet{position:relative;aspect-ratio:210/297;width:100%;background:#fff;border:1px solid rgba(0,0,0,.06);border-bottom:0;
+  box-shadow:var(--shadow-sheet);overflow:hidden;transform-origin:50% 100%;transition:transform .3s ease,box-shadow .3s ease;
+  /* mostra só a parte superior da folha, como um documento saindo da bandeja */
+  margin-bottom:-18%}
+.sheet img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .45s ease}
+.preview::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:linear-gradient(to bottom,transparent,rgba(233,235,230,.9))}
+.card:hover .sheet{box-shadow:var(--shadow-sheet-hi);transform:translateY(-4px)}
+.card:hover .sheet img{transform:scale(1.035)}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;background:rgba(29,35,32,0);transition:background .25s;z-index:2}
+.overlay span{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;background:var(--ink);color:#fff;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s}
+.card:hover .overlay,.card:focus-visible .overlay{background:rgba(29,35,32,.18)}
+.card:hover .overlay span,.card:focus-visible .overlay span{opacity:1;transform:none}
+.pages-badge{position:absolute;top:10px;right:10px;z-index:3;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-2);
+  background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:999px;padding:2px 8px}
+.info{display:flex;flex-direction:column;gap:4px;padding:16px 16px 14px;flex:1;min-width:0}
+.code{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--accent)}
+.name{font-size:17px;line-height:1.25;font-weight:600;color:var(--ink);text-wrap:balance}
+.norm{font-family:var(--mono);font-size:12px;color:var(--ink-2);margin-top:2px;overflow-wrap:anywhere}
+.layer{font-size:12.5px;color:var(--ink-3)}
+.nw{white-space:nowrap}
+.cta{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);margin-inline:-16px;padding-inline:16px;
+  display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.info .spacer{height:8px}
+.card:hover .cta .arr{transform:translateX(4px)}
+.cta .arr{transition:transform .2s}
+mark{background:#fff2a8;color:inherit;border-radius:2px;padding:0 1px}
+
+.empty{padding:56px 16px;text-align:center;color:var(--ink-2);border:1px dashed var(--line);border-radius:var(--r);background:var(--surface)}
+.empty b{display:block;color:var(--ink);font-size:17px;margin-bottom:4px}
+.empty button{margin-top:14px;height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase}
+
+footer{border-top:1px solid var(--line);background:var(--surface)}
+footer .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;padding-block:18px;font-size:12.5px;color:var(--ink-3)}
+footer .brand{display:flex;align-items:center;gap:10px;color:var(--ink-2)}
+footer .brand img{width:22px;height:auto}
+footer .brand b{font-family:var(--mono);letter-spacing:.06em;color:var(--ink)}
+
+/* ---------- visualizador ---------- */
+.viewer{position:fixed;inset:0;z-index:50;background:var(--viewer);color:var(--viewer-fg);display:grid;grid-template-rows:auto minmax(0,1fr) auto;grid-template-columns:minmax(0,1fr);
+  animation:vin .22s ease}
+@keyframes vin{from{opacity:0}to{opacity:1}}
+.vbar{display:flex;align-items:center;gap:12px;padding:calc(env(safe-area-inset-top,0px) + 10px) clamp(12px,2vw,20px) 10px;border-bottom:1px solid var(--viewer-line);background:var(--viewer)}
+.vtitle{min-width:0;flex:1;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.vtitle .vcode{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em;color:#8fd0a2}
+.vtitle .vname{font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:100%}
+.vtitle .vnorm{font-family:var(--mono);font-size:12px;color:var(--viewer-mut)}
+.vtools{display:flex;align-items:center;gap:4px;flex:none}
+.vtools .sep{width:1px;height:22px;background:var(--viewer-line);margin:0 6px}
+.ib{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:8px;border:0;background:transparent;color:var(--viewer-fg);cursor:pointer;transition:background .15s}
+.ib:hover{background:var(--viewer-2)}
+.ib[aria-pressed="true"]{background:var(--viewer-2);color:#8fd0a2}
+.ib svg{width:19px;height:19px}
+.ib:focus-visible{outline:2px solid #8fd0a2;outline-offset:1px}
+.zoomval{min-width:52px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--viewer-mut);font-variant-numeric:tabular-nums}
+.canvas{position:relative;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom}
+.pages{display:flex;flex-direction:column;align-items:center;gap:18px;padding:22px 16px 28px;min-width:min-content;margin:0 auto}
+.page{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.35),0 24px 60px -24px rgba(0,0,0,.7);flex:none}
+.page img{width:100%;height:auto}
+.canvas.slide-next .pages{animation:sn .32s cubic-bezier(.2,.7,.2,1)}
+.canvas.slide-prev .pages{animation:sp .32s cubic-bezier(.2,.7,.2,1)}
+@keyframes sn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+@keyframes sp{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
+.vfoot{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px;
+  padding:10px clamp(12px,2vw,20px) calc(env(safe-area-inset-bottom,0px) + 10px);border-top:1px solid var(--viewer-line);background:var(--viewer)}
+.nb{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;border-radius:999px;border:1px solid var(--viewer-line);background:transparent;cursor:pointer;
+  font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--viewer-fg);transition:background .15s,border-color .15s}
+.nb:hover{background:var(--viewer-2);border-color:#56605a}
+.nb:focus-visible{outline:2px solid #8fd0a2}
+.progress{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0}
+.pcount{font-family:var(--mono);font-size:13px;color:var(--viewer-mut);font-variant-numeric:tabular-nums}
+.pcount b{color:var(--viewer-fg);font-weight:600}
+.pcount .pcode{margin-left:8px;color:var(--viewer-mut)}
+.segs{display:flex;gap:4px;width:min(420px,100%)}
+.seg{flex:1;height:14px;border:0;background:transparent;padding:5px 0;cursor:pointer;position:relative}
+.seg::before{content:"";display:block;height:4px;border-radius:2px;background:#3f4641;transition:background .2s}
+.seg.done::before{background:#5f8f6c}
+.seg.cur::before{background:#8fd0a2}
+.seg:hover::before{background:#c8d4cb}
+.seg .tip{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:10.5px;white-space:nowrap;background:#000;color:#fff;
+  padding:3px 6px;border-radius:4px;opacity:0;pointer-events:none;transition:opacity .15s}
+.seg:hover .tip,.seg:focus-visible .tip{opacity:1}
+.seg:focus-visible{outline:2px solid #8fd0a2;outline-offset:2px;border-radius:2px}
+.hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--viewer-mut);
+  background:rgba(0,0,0,.5);padding:5px 10px;border-radius:999px;pointer-events:none;transition:opacity .4s}
+
+/* ---------- responsivo ---------- */
+@media (max-width:860px){
+  .tools .wrap{flex-direction:column;align-items:stretch;flex-wrap:nowrap}
+  .tools .wrap>*{min-width:0;max-width:100%}
+  .search{max-width:none;flex:1 1 auto}
+  .chips{margin-inline:calc(-1 * clamp(16px,4vw,40px));padding-inline:clamp(16px,4vw,40px)}
+}
+@media (max-width:640px){
+  .mh-count{display:none}
+  .mh-sub{font-size:13.5px}
+  .grid{grid-template-columns:minmax(0,1fr);gap:16px}
+  .card{flex-direction:row;align-items:stretch}
+  .preview{width:42%;flex:none;padding:14px 14px 0}
+  .info{padding:14px}
+  .name{font-size:16px}
+  .cta{margin-inline:-14px;padding-inline:14px}
+  .overlay{display:none}
+  .vtitle .vnorm{display:none}
+  .vtools .opt{display:none}
+  .vtools .sep{display:none}
+  .vfoot{grid-template-columns:auto minmax(0,1fr) auto;gap:10px}
+  .nb .lbl{display:none}
+  .nb{width:46px;padding:0;justify-content:center}
+  .pcount .pcode{display:none}
+}
+@media (hover:none){
+  .card:hover{transform:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <img class="crest" src="ime.png" alt="Brasão do IME" width="64" height="85">
+    <div class="mh-txt">
+      <div class="mh-kicker">Plataforma LET-Sys</div>
+      <h1>Biblioteca de Ensaios LET</h1>
+      <p class="mh-sub">Modelos de boletins e relatórios técnicos gerados pela plataforma</p>
+    </div>
+    <div class="mh-count"><b id="total">12</b>modelos disponíveis</div>
+  </div>
+</header>
+
+<div class="wrap intro">
+  <span>Biblioteca visual de modelos de boletins e relatórios gerados pela plataforma LET.</span>
+  <span>Os documentos apresentados são modelos demonstrativos e utilizam dados fictícios.</span>
+</div>
+
+<div class="tools" id="tools">
+  <div class="wrap">
+    <label class="search" for="q">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Pesquisar ensaio, código ou norma..." autocomplete="off" aria-label="Pesquisar ensaio, código ou norma">
+      <button class="x" id="qx" type="button" aria-label="Limpar busca" hidden>×</button>
+    </label>
+    <div class="chips" id="chips" role="group" aria-label="Filtrar por camada"></div>
+  </div>
+  <div class="wrap result-line" id="resline" aria-live="polite"></div>
+</div>
+
+<main class="wrap">
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>
+    <b>Nenhum modelo encontrado</b>
+    Tente outro termo ou outra camada.
+    <div><button type="button" id="reset">Limpar busca e filtros</button></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><img src="ime.png" alt="" width="22" height="29"><span><b>LET-Sys</b> · Laboratório de Ensaios Técnicos</span></div>
+    <span>Projeto de Fim de Curso · Instituto Militar de Engenharia · 2026</span>
+  </div>
+</footer>
+
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="vname" hidden>
+  <div class="vbar">
+    <div class="vtitle">
+      <span class="vcode" id="vcode"></span>
+      <span class="vname" id="vname"></span>
+      <span class="vnorm" id="vnorm"></span>
+    </div>
+    <div class="vtools">
+      <button class="ib" id="zout" aria-label="Diminuir zoom" title="Diminuir zoom (−)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M20 20l-3.5-3.5"/></svg></button>
+      <span class="zoomval opt" id="zval">100%</span>
+      <button class="ib" id="zin" aria-label="Aumentar zoom" title="Aumentar zoom (+)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M11 8v6M20 20l-3.5-3.5"/></svg></button>
+      <span class="sep"></span>
+      <button class="ib opt" id="fitp" aria-label="Ajustar à tela" title="Ajustar à tela (0)" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="1.5"/></svg></button>
+      <button class="ib opt" id="fitw" aria-label="Ajustar à largura" title="Ajustar à largura" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></button>
+      <button class="ib opt" id="fs" aria-label="Tela cheia" title="Tela cheia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <span class="sep"></span>
+      <button class="ib" id="vclose" aria-label="Fechar (Esc)" title="Fechar (Esc)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+  </div>
+  <div class="canvas" id="canvas">
+    <div class="pages" id="pages"></div>
+  </div>
+  <div class="vfoot">
+    <button class="nb" id="prev" aria-label="Modelo anterior"><span aria-hidden="true">←</span><span class="lbl">Anterior</span></button>
+    <div class="progress">
+      <div class="pcount"><b id="pi">01</b> / <span id="pn">12</span></div>
+      <div class="segs" id="segs"></div>
+    </div>
+    <button class="nb" id="next" aria-label="Próximo modelo"><span class="lbl">Próximo</span><span aria-hidden="true">→</span></button>
+  </div>
+</div>
+
+<script>
+const LAYERS = [
+  {id:"rev",  nome:"Revestimento",          cls:"l-rev"},
+  {id:"base", nome:"Base",                  cls:"l-base"},
+  {id:"sub",  nome:"Sub-base",              cls:"l-sub"},
+  {id:"ref",  nome:"Reforço do subleito",   cls:"l-ref"},
+  {id:"subl", nome:"Subleito",              cls:"l-subl"}
+];
+const SOLO = ["base","sub","ref","subl"];
+const ENSAIOS = [
+  {code:"ATT", reg:"ATT-003", pags:1, nome:"Limites de Atterberg", norma:"NBR 6459 · NBR 7180", camadas:SOLO,
+   desc:"Determina o limite de liquidez e o limite de plasticidade do solo, e daí o índice de plasticidade. Indica a sensibilidade do material à água e serve de critério de aceitação de solos para as camadas do pavimento.",
+   mede:"LL, LP e IP (%)", amostra:"Fração passante na peneira nº 40", uso:"Classificação SUCS/TRB e aceitação de jazidas",
+   res:[["LL","43,4 %"],["LP","18,4 %"],["IP","25,0 %"],["SUCS","CL"]], status:"Alta plasticidade", st:"info", local:"Subleito · Est 5+00 a 7+00"},
+  {code:"TUM", reg:"TUM-004", pags:1, nome:"Teor de Umidade", norma:"DNIT 456/2025-ME (estufa)", camadas:SOLO,
+   desc:"Mede a quantidade de água presente no solo em relação à massa seca. É o dado de partida para a compactação em campo e para conferir se a camada está dentro da faixa de umidade especificada.",
+   mede:"Umidade w (%)", amostra:"Solo coletado na pista ou na jazida", uso:"Liberação da compactação",
+   res:[["w médio","14,79 %"],["w máx","14,86 %"],["w mín","14,72 %"],["Dif. máx","0,14"]], status:"Concluído", st:"info", local:"Sub-base · Est 10+00 a 12+00"},
+  {code:"GRS", reg:"GRS-002", pags:2, nome:"Granulometria de Solos", norma:"DNIT 459/2025-ME", camadas:SOLO,
+   desc:"Distribui o solo por tamanho de grão por peneiramento e sedimentação. A curva granulométrica, junto com os limites de Atterberg, classifica o solo e indica seu comportamento como subleito.",
+   mede:"% passante por peneira", amostra:"Solo seco ao ar", uso:"Classificação SUCS e HRB",
+   res:[["SUCS","SC"],["HRB","A-7-6"],["IG","3"],["D60","0,35 mm"]], status:"Subleito muito ruim", st:"warn", local:"Subleito · Est 5+00 a 7+00"},
+  {code:"GRA", reg:"GRA-003", pags:2, nome:"Granulometria de Agregados", norma:"DNIT 412/2025-ME", camadas:["rev","base","sub"],
+   desc:"Peneiramento de agregados graúdos e miúdos usados em bases granulares e misturas asfálticas. O resultado é comparado com as faixas granulométricas da especificação de serviço.",
+   mede:"% passante por peneira", amostra:"Brita, pedrisco, areia, pó", uso:"Enquadramento na faixa DNIT",
+   res:[["Material","Brita 1"],["MF","5,95"],["Dmáx","19,0 mm"]], status:"Classificado", st:"info", local:"Base · Est 12+00 a 14+00"},
+  {code:"PRO", reg:"PRO-003", pags:1, nome:"Compactação Proctor", norma:"NBR 7182:2020", camadas:SOLO,
+   desc:"Compacta o solo em cilindro padronizado com teores de umidade crescentes para obter a curva de compactação. Define a massa específica aparente seca máxima e a umidade ótima, referências de todo o controle de campo.",
+   mede:"γd máx (g/cm³) e w ótima (%)", amostra:"Solo da jazida ou da pista", uso:"Referência para o grau de compactação",
+   res:[["γd máx","1,902 g/cm³"],["w ótima","14,21 %"],["Energia","Normal"]], status:"Referência", st:"info", local:"Sub-base · Est 10+00 a 12+00"},
+  {code:"CBR", reg:"CBR-003", pags:1, nome:"Índice de Suporte Califórnia", norma:"NBR 9895", camadas:SOLO,
+   desc:"Mede a resistência à penetração do solo compactado e imerso por quatro dias, comparada a uma brita padrão, e registra a expansão. É o principal parâmetro do dimensionamento pelo método do DNER.",
+   mede:"CBR (%) e expansão (%)", amostra:"Corpos de prova compactados", uso:"Dimensionamento e aceitação de camadas",
+   res:[["CBR 2,54","22,63 %"],["CBR 5,08","24,09 %"],["Expansão","0,535 %"],["Limite","≤ 0,5 %"]], status:"Reprovado", st:"bad", local:"Sub-base · Est 10+00 a 12+00"},
+  {code:"DIS", reg:"DIS-004", pags:1, nome:"Densidade In Situ", norma:"NBR 7185:2016 (frasco de areia)", camadas:SOLO,
+   desc:"Determina a massa específica do solo já compactado na pista, escavando um furo e medindo seu volume com areia calibrada. Comparada ao Proctor, fornece o grau de compactação de cada ponto.",
+   mede:"γ úmida, γ seca e GC (%)", amostra:"Furos em BE, eixo e BD", uso:"Liberação da camada compactada",
+   res:[["Referência","PRO-003"],["γd máx","1,902 g/cm³"],["GC mín","95 %"]], status:"Aprovado", st:"ok", local:"Sub-base · Est 10+00 a 12+00"},
+  {code:"DEN", reg:"DEN-005", pags:1, nome:"Densímetro Nuclear · Solos", norma:"DNIT 405/2017-ME · ASTM D6938", camadas:SOLO,
+   desc:"Mede densidade e umidade da camada compactada por radiação, sem escavar, em modo de retrodispersão. Dá o grau de compactação em minutos, com o Proctor da camada como referência.",
+   mede:"γ seca, w (%) e GC (%)", amostra:"Leituras na pista", uso:"Controle rápido de compactação",
+   res:[["γd médio","1,884 g/cm³"],["w médio","14,40 %"],["GC","99,04 %"]], status:"Aprovado", st:"ok", local:"Sub-base · Est 10+00 a 12+05"},
+  {code:"DEN", reg:"DEN-006", pags:2, nome:"Densímetro Nuclear · Misturas Asfálticas", norma:"ASTM D2950/D2950M", camadas:["rev"],
+   desc:"Aplicação do densímetro nuclear sobre a mistura asfáltica recém-compactada. Compara a densidade medida com a densidade de referência da mistura e registra a temperatura da pista.",
+   mede:"Densidade medida e GC (%)", amostra:"CBUQ na pista", uso:"Controle da compactação do revestimento",
+   res:[["Dens. média","2,2925 g/cm³"],["Referência","2,400 g/cm³"],["GC","95,52 %"],["Pista","140 °C"]], status:"Aprovado", st:"ok", local:"Revestimento · Est 12+00 a 14+00"},
+  {code:"MAR", reg:"MAR-002", pags:2, nome:"Estabilidade e Fluência Marshall", norma:"DNIT 447/2024-ME", camadas:["rev"],
+   desc:"Moldagem de corpos de prova de mistura asfáltica em vários teores de ligante e ruptura na prensa Marshall. Fornece estabilidade, fluência e parâmetros volumétricos para definir o teor ótimo.",
+   mede:"Estabilidade, fluência, VV, VAM, RBV", amostra:"CBUQ Faixa C · CAP 50/70", uso:"Dosagem e controle do CBUQ",
+   res:[["Teor ótimo","4,32 %"],["VV","4,01 %"],["RBV","72,5 %"],["Estab.","1.102 kgf"]], status:"Aprovado", st:"ok", local:"Revestimento · Est 12+00 a 14+00"},
+  {code:"BET", reg:"BET-002", pags:2, nome:"Extração de Betume", norma:"DNIT 158/2011-ME (refluxo)", camadas:["rev"],
+   desc:"Extrai o ligante asfáltico da mistura com solvente para medir o teor de betume efetivamente aplicado, e faz a granulometria do agregado recuperado. Confere se a usina está dentro da tolerância do projeto.",
+   mede:"Teor de ligante (%)", amostra:"CBUQ-01 · Faixa C", uso:"Controle de produção da usina",
+   res:[["Teor médio","5,15 %"],["Máx","5,20 %"],["Mín","5,10 %"]], status:"Dentro da tolerância", st:"ok", local:"Revestimento · Est 12+00 a 14+00"},
+  {code:"VBK", reg:"VBK-003", pags:1, nome:"Viga Benkelman", norma:"DNIT 133/2025-ME", camadas:["rev","base"],
+   desc:"Mede a deflexão recuperável do pavimento sob a carga de um eixo simples de rodado duplo de 8,2 tf. Avalia a resposta estrutural do conjunto de camadas e compara a deflexão característica com a admissível.",
+   mede:"Deflexão D0 (0,01 mm)", amostra:"Medição na pista por estaca", uso:"Avaliação estrutural e aceitação",
+   res:[["D0 médio","50,82"],["Dc","69,34"],["Dadm","45,00"]], status:"Necessita reforço", st:"bad", local:"Revestimento · Est 12+00 a 14+00"}
+];
+
+/* versão das imagens: troque a cada atualização de imagens para forçar recarga */
+const V = "20261006c";
+const thumb = e=>`${e.reg}-thumb.jpg?v=${V}`;
+const pageSrc = (e,n)=>`${e.reg}-${n}.jpg?v=${V}`;
+const PAGE_W = 1075, PAGE_H = 1521, A4_PX = 794; /* A4 a 96 dpi = 794 px de largura → referência de 100% */
+
+const $ = s=>document.querySelector(s);
+const pad = n=>String(n).padStart(2,"0");
+const layerOf = id=>LAYERS.find(l=>l.id===id);
+const norm = t=>String(t).normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const esc = t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ORDER = ["subl","ref","sub","base","rev"];
+const CHIP_LABEL = {subl:"Subleito",ref:"Reforço",sub:"Sub-base",base:"Base",rev:"Revestimento"};
+const layersText = e=>ORDER.filter(id=>e.camadas.includes(id)).map(id=>layerOf(id).nome).join(" · ");
+const layersHTML = e=>ORDER.filter(id=>e.camadas.includes(id)).map(id=>`<span class="nw">${esc(layerOf(id).nome)}</span>`).join(" · ");
+
+/* índice de busca a partir dos campos já existentes */
+ENSAIOS.forEach(e=>{
+  e._hay = norm([e.code,e.reg,e.nome,e.norma,e.desc,e.mede,e.amostra,e.uso,e.camadas.map(id=>layerOf(id).nome).join(" ")].join(" "));
+});
+
+$("#total").textContent = ENSAIOS.length;
+$("#pn").textContent = pad(ENSAIOS.length);
+
+/* ---------- filtros ---------- */
+let layer = null, query = "";
+const chips = $("#chips");
+[["all","Todos"],...ORDER.map(id=>[id,CHIP_LABEL[id]])].forEach(([id,label])=>{
+  const b=document.createElement("button");
+  b.className="chip"; b.type="button"; b.dataset.id=id; b.textContent=label;
+  b.setAttribute("aria-pressed",String(id==="all"));
+  b.onclick=()=>{ layer = id==="all"?null:id; render(); };
+  chips.appendChild(b);
+});
+
+const q=$("#q"), qx=$("#qx");
+q.addEventListener("input",()=>{ query=q.value; qx.hidden=!query; render(); });
+qx.onclick=()=>{ q.value=""; query=""; qx.hidden=true; render(); q.focus(); };
+$("#reset").onclick=()=>{ q.value=""; query=""; qx.hidden=true; layer=null; render(); };
+
+function hl(text){
+  const terms = norm(query).split(/\s+/).filter(Boolean);
+  if(!terms.length) return esc(text);
+  const n = norm(text); const marks = new Array(text.length).fill(false);
+  terms.forEach(t=>{ let i=n.indexOf(t); while(i>-1){ for(let k=i;k<i+t.length;k++) marks[k]=true; i=n.indexOf(t,i+1);} });
+  let out="", open=false;
+  for(let i=0;i<text.length;i++){
+    if(marks[i]&&!open){out+="<mark>";open=true}
+    if(!marks[i]&&open){out+="</mark>";open=false}
+    out+=esc(text[i]);
+  }
+  return out+(open?"</mark>":"");
+}
+
+const grid=$("#grid");
+let visible=[];
+function render(){
+  chips.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",String((layer||"all")===c.dataset.id)));
+  const terms = norm(query).split(/\s+/).filter(Boolean);
+  visible = ENSAIOS.map((e,i)=>i).filter(i=>{
+    const e=ENSAIOS[i];
+    if(layer && !e.camadas.includes(layer)) return false;
+    return terms.every(t=>e._hay.includes(t));
+  });
+  grid.innerHTML = visible.map((i,k)=>{
+    const e=ENSAIOS[i];
+    return `<button class="card enter" type="button" style="--k:${k}" data-i="${i}" aria-label="Visualizar PDF ${esc(e.reg)}, ${esc(e.nome)}">
+      <div class="preview">
+        ${e.pags>1?`<span class="pages-badge">${e.pags} folhas</span>`:""}
+        <div class="sheet"><img src="${thumb(e)}" alt="" loading="lazy" width="${PAGE_W}" height="${PAGE_H}"></div>
+        <div class="overlay"><span>Visualizar PDF</span></div>
+      </div>
+      <div class="info">
+        <span class="code">${hl(e.reg)}</span>
+        <span class="name">${hl(e.nome)}</span>
+        <span class="norm">${hl(e.norma)}</span>
+        <span class="layer">${layersHTML(e)}</span>
+        <span class="spacer"></span>
+        <span class="cta">Visualizar PDF <span class="arr" aria-hidden="true">→</span></span>
+      </div>
+    </button>`;
+  }).join("");
+  grid.querySelectorAll(".card").forEach(c=>c.onclick=()=>openViewer(+c.dataset.i));
+  $("#empty").hidden = visible.length>0;
+  const parts=[];
+  if(layer) parts.push(CHIP_LABEL[layer]);
+  if(query.trim()) parts.push(`“${esc(query.trim())}”`);
+  $("#resline").innerHTML = `Exibindo <b>${visible.length}</b> de ${ENSAIOS.length} modelos${parts.length?" · "+parts.join(" · "):""}`;
+}
+
+/* sombra da barra de ferramentas ao rolar */
+const tools=$("#tools");
+new IntersectionObserver(([en])=>tools.classList.toggle("stuck",en.intersectionRatio<1),{threshold:[1],rootMargin:"-1px 0px 0px 0px"}).observe(tools);
+
+/* ---------- visualizador ---------- */
+const viewer=$("#viewer"), canvas=$("#canvas"), pagesEl=$("#pages");
+let cur=0, mode="fit", scale=1, lastFocus=null;
+/* navegação percorre a lista visível; se ela não contiver o atual, usa todos */
+const navList = ()=> visible.includes(cur) && visible.length ? visible : ENSAIOS.map((_,i)=>i);
+
+const segs=$("#segs");
+function buildSegs(){
+  const list=navList();
+  segs.innerHTML = list.map((i,k)=>`<button class="seg" data-i="${i}" aria-label="${esc(ENSAIOS[i].reg)}"><span class="tip">${esc(ENSAIOS[i].reg)}</span></button>`).join("");
+  segs.querySelectorAll(".seg").forEach(s=>s.onclick=()=>go(+s.dataset.i));
+}
+
+function pageWidth(){
+  const cw=canvas.clientWidth-32, ch=canvas.clientHeight-50;
+  if(mode==="fit") return Math.max(160,Math.min(cw, ch*PAGE_W/PAGE_H));
+  if(mode==="width") return Math.max(160,Math.min(cw, 1400));
+  return A4_PX*scale;
+}
+function layout(){
+  const w=Math.round(pageWidth());
+  pagesEl.querySelectorAll(".page").forEach(p=>p.style.width=w+"px");
+  $("#zval").textContent=Math.round(w/A4_PX*100)+"%";
+  $("#fitp").setAttribute("aria-pressed",String(mode==="fit"));
+  $("#fitw").setAttribute("aria-pressed",String(mode==="width"));
+}
+function setZoom(next){
+  const curW=pageWidth();
+  const steps=[.5,.67,.75,.9,1,1.1,1.25,1.5,1.75,2,2.5,3];
+  const s=curW/A4_PX;
+  scale = next>0 ? (steps.find(v=>v>s+.01)||3) : ([...steps].reverse().find(v=>v<s-.01)||.5);
+  mode="custom"; layout();
+}
+
+function show(i,dir){
+  cur=i; const e=ENSAIOS[i]; const list=navList(); const pos=list.indexOf(i);
+  $("#vcode").textContent=e.reg;
+  $("#vname").textContent=e.nome;
+  $("#vnorm").textContent=e.norma;
+  $("#pi").textContent=pad(pos+1); $("#pn").textContent=pad(list.length);
+  pagesEl.innerHTML = Array.from({length:e.pags},(_,k)=>`<div class="page"><img src="${pageSrc(e,k+1)}" alt="${esc(e.reg)}, folha ${k+1} de ${e.pags}" width="${PAGE_W}" height="${PAGE_H}"></div>`).join("");
+  layout(); canvas.scrollTop=0; canvas.scrollLeft=0;
+  canvas.classList.remove("slide-next","slide-prev");
+  if(dir){ void canvas.offsetWidth; canvas.classList.add(dir>0?"slide-next":"slide-prev"); }
+  segs.querySelectorAll(".seg").forEach((s,k)=>{ s.classList.toggle("cur",k===pos); s.classList.toggle("done",k<pos); s.setAttribute("aria-current",String(k===pos)); });
+  /* pré-carrega vizinhos */
+  [list[(pos+1)%list.length],list[(pos-1+list.length)%list.length]].forEach(j=>{ const im=new Image(); im.src=pageSrc(ENSAIOS[j],1); });
+  try{history.replaceState(null,"","#"+e.reg.toLowerCase())}catch(_){}
+}
+function go(i){ const list=navList(); const a=list.indexOf(cur), b=list.indexOf(i); show(i, b>a?1:-1); }
+function step(d){ const list=navList(); const pos=list.indexOf(cur); show(list[(pos+d+list.length)%list.length], d); }
+
+function openViewer(i){
+  lastFocus=document.activeElement; cur=i; mode="fit";
+  viewer.hidden=false; document.documentElement.style.overflow="hidden";
+  buildSegs(); show(i,0); $("#vclose").focus();
+}
+function closeViewer(){
+  if(document.fullscreenElement){ document.exitFullscreen().catch(()=>{}); }
+  viewer.hidden=true; document.documentElement.style.overflow="";
+  try{history.replaceState(null,"",location.pathname+location.search)}catch(_){}
+  const c=grid.querySelector(`.card[data-i="${cur}"]`); (c||lastFocus)?.focus?.();
+}
+
+$("#vclose").onclick=closeViewer;
+$("#prev").onclick=()=>step(-1);
+$("#next").onclick=()=>step(1);
+$("#zin").onclick=()=>setZoom(1);
+$("#zout").onclick=()=>setZoom(-1);
+$("#fitp").onclick=()=>{mode="fit";layout()};
+$("#fitw").onclick=()=>{mode="width";layout()};
+const fsBtn=$("#fs");
+const canFS = !!(viewer.requestFullscreen||viewer.webkitRequestFullscreen);
+if(!canFS) fsBtn.hidden=true;
+fsBtn.onclick=()=>{
+  if(document.fullscreenElement||document.webkitFullscreenElement){ (document.exitFullscreen||document.webkitExitFullscreen).call(document); return; }
+  const r=(viewer.requestFullscreen||viewer.webkitRequestFullscreen).call(viewer); if(r&&r.catch) r.catch(()=>{});
+};
+document.addEventListener("fullscreenchange",()=>{ fsBtn.setAttribute("aria-pressed",String(!!document.fullscreenElement)); setTimeout(layout,60); });
+window.addEventListener("resize",()=>{ if(!viewer.hidden) layout(); });
+
+document.addEventListener("keydown",ev=>{
+  if(viewer.hidden){
+    if(ev.key==="/" && document.activeElement!==q){ ev.preventDefault(); q.focus(); }
+    return;
+  }
+  if(ev.key==="Escape"){ if(document.fullscreenElement) return; ev.preventDefault(); closeViewer(); }
+  else if(ev.key==="ArrowRight"){ ev.preventDefault(); step(1); }
+  else if(ev.key==="ArrowLeft"){ ev.preventDefault(); step(-1); }
+  else if(ev.key==="+"||ev.key==="="){ ev.preventDefault(); setZoom(1); }
+  else if(ev.key==="-"||ev.key==="_"){ ev.preventDefault(); setZoom(-1); }
+  else if(ev.key==="0"){ mode="fit"; layout(); }
+  else if(ev.key==="Tab"){ /* mantém o foco dentro do visualizador */
+    const f=[...viewer.querySelectorAll("button:not([hidden])")].filter(b=>b.offsetParent!==null);
+    if(!f.length) return; const first=f[0], last=f[f.length-1];
+    if(ev.shiftKey && document.activeElement===first){ ev.preventDefault(); last.focus(); }
+    else if(!ev.shiftKey && document.activeElement===last){ ev.preventDefault(); first.focus(); }
+  }
+});
+
+/* swipe no celular: só quando a folha está ajustada à tela */
+let sx=null, sy=null;
+canvas.addEventListener("touchstart",ev=>{ if(ev.touches.length!==1){sx=null;return} sx=ev.touches[0].clientX; sy=ev.touches[0].clientY; },{passive:true});
+canvas.addEventListener("touchend",ev=>{
+  if(sx==null) return; const t=ev.changedTouches[0]; const dx=t.clientX-sx, dy=t.clientY-sy; sx=null;
+  const zoomed = canvas.scrollWidth > canvas.clientWidth+4;
+  if(!zoomed && Math.abs(dx)>60 && Math.abs(dy)<60) step(dx<0?1:-1);
+},{passive:true});
+/* duplo toque/clique alterna entre ajustar à tela e à largura */
+canvas.addEventListener("dblclick",()=>{ mode = mode==="fit" ? "width" : "fit"; layout(); });
+
+/* ---------- início ---------- */
+render();
+const h=(location.hash||"").slice(1).toUpperCase();
+let hi=ENSAIOS.findIndex(e=>e.reg===h); if(hi<0) hi=ENSAIOS.findIndex(e=>e.code===h);
+if(hi>=0) openViewer(hi);
+</script>
+</body>
+</html>
